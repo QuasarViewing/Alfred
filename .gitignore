@@ -1,0 +1,22 @@
+# Environment and secrets
+alfred/.env
+
+# Python
+alfred/venv/
+alfred/__pycache__/
+alfred/*.pyc
+
+# Databases
+alfred/alfred.db
+alfred/chroma_db/
+
+# Logs
+alfred/alfred.log
+
+# Notes and docs
+notes/
+*.md
+
+# OS
+.DS_Store
+Thumbs.db

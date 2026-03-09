@@ -1,0 +1,7 @@
+fastapi
+uvicorn
+python-dotenv
+python-telegram-bot
+chromadb
+anthropic
+ddgs
