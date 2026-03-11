@@ -7,7 +7,16 @@ from dotenv import load_dotenv
 from database import init_db, log_conversation
 from memory import store_memory, retrieve_memories
 from datetime import datetime
-from tools import web_search, get_weather, calculate, get_alfred_preference
+from tools import (
+    web_search,
+    get_weather,
+    calculate,
+    get_alfred_preference,
+)
+from calendar_tool import (
+    get_upcoming_events,
+    add_event,
+)
 import os
 import logging
 import anthropic
@@ -15,7 +24,9 @@ import anthropic
 load_dotenv()
 TOKEN = os.getenv("TELEGRAM_TOKEN")
 ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY")
-client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
+client = anthropic.Anthropic(
+    api_key=ANTHROPIC_API_KEY
+)
 
 
 def ask_claude(message, memories):
@@ -96,7 +107,51 @@ def ask_claude(message, memories):
                 },
                 "required": ["key"],
             },
-        }
+        },
+        {
+            "name": "get_upcoming_events",
+            "description": "Get a list of upcoming events from the user's calendar.",
+            "input_schema": {
+                "type": "object",
+                "properties": {
+                    "max_results": {
+                        "type": "integer",
+                        "description": "The maximum number of events to retrieve.",
+                    }
+                },
+                "required": [],
+            },
+        },
+        {
+            "name": "add_event",
+            "description": "Add a new event to the user's calendar.",
+            "input_schema": {
+                "type": "object",
+                "properties": {
+                    "summary": {
+                        "type": "string",
+                        "description": "The title of the event.",
+                    },
+                    "start_time": {
+                        "type": "string",
+                        "description": "The start time of the event in ISO 8601 format.",
+                    },
+                    "end_time": {
+                        "type": "string",
+                        "description": "The end time of the event in ISO 8601 format.",
+                    },
+                    "description": {
+                        "type": "string",
+                        "description": "A description of the event.",
+                    },
+                },
+                "required": [
+                    "summary",
+                    "start_time",
+                    "end_time",
+                ],
+            },
+        },
     ]
 
     response = client.messages.create(
@@ -104,31 +159,90 @@ def ask_claude(message, memories):
         max_tokens=1024,
         system=system_prompt,
         tools=tools,
-        messages=[{"role": "user", "content": message}],
+        messages=[
+            {"role": "user", "content": message}
+        ],
     )
 
-    messages = [{"role": "user", "content": message}]
+    messages = [
+        {"role": "user", "content": message}
+    ]
     current_response = response
 
-    while current_response.stop_reason == "tool_use":
+    while (
+        current_response.stop_reason == "tool_use"
+    ):
         tool_results = []
         for block in current_response.content:
             if block.type == "tool_use":
                 if block.name == "web_search":
-                    tool_result = web_search(block.input["query"])
+                    tool_result = web_search(
+                        block.input["query"]
+                    )
                 elif block.name == "get_weather":
-                    tool_result = get_weather(block.input["location"])
+                    tool_result = get_weather(
+                        block.input["location"]
+                    )
                 elif block.name == "calculate":
-                    tool_result = calculate(block.input["expression"])
-                elif block.name == "get_alfred_preference":
-                    tool_result = get_alfred_preference(block.input["key"])
-                tool_results.append({
-                    "type": "tool_result",
-                    "tool_use_id": block.id,
-                    "content": str(tool_result),
-                })
-        messages.append({"role": "assistant", "content": current_response.content})
-        messages.append({"role": "user", "content": tool_results})
+                    tool_result = calculate(
+                        block.input["expression"]
+                    )
+                elif (
+                    block.name
+                    == "get_alfred_preference"
+                ):
+                    tool_result = (
+                        get_alfred_preference(
+                            block.input["key"]
+                        )
+                    )
+                elif (
+                    block.name
+                    == "get_upcoming_events"
+                ):
+                    tool_result = (
+                        get_upcoming_events(
+                            block.input.get(
+                                "max_results", 10
+                            )
+                        )
+                    )
+                elif block.name == "add_event":
+                    tool_result = add_event(
+                        summary=block.input[
+                            "summary"
+                        ],
+                        start_time=block.input[
+                            "start_time"
+                        ],
+                        end_time=block.input[
+                            "end_time"
+                        ],
+                        description=block.input.get(
+                            "description", ""
+                        ),
+                    )
+                tool_results.append(
+                    {
+                        "type": "tool_result",
+                        "tool_use_id": block.id,
+                        "content": str(
+                            tool_result
+                        ),
+                    }
+                )
+        messages.append(
+            {
+                "role": "assistant",
+                "content": current_response.content,
+            }
+        )
+        messages.append(
+            {
+                "role": "user",
+                "content": tool_results,
+            }
+        )
         current_response = client.messages.create(
             model="claude-sonnet-4-6",
             max_tokens=1024,
@@ -145,9 +259,13 @@ def ask_claude(message, memories):
 
 async def handle_message(update, context):
     user_message = update.message.text
-    logging.info(f"Message received: {user_message}")
+    logging.info(
+        f"Message received: {user_message}"
+    )
     memories = retrieve_memories(user_message)
-    claude_response = ask_claude(user_message, memories)
+    claude_response = ask_claude(
+        user_message, memories
+    )
     if is_worth_storing(user_message):
         store_memory(
             user_message,
@@ -167,12 +285,16 @@ async def handle_message(update, context):
     await update.message.reply_text(
         claude_response, parse_mode="HTML"
     )
-    log_conversation(user_message, claude_response)
+    log_conversation(
+        user_message, claude_response
+    )
 
 
 def run_bot():
     init_db()
-    app = ApplicationBuilder().token(TOKEN).build()
+    app = (
+        ApplicationBuilder().token(TOKEN).build()
+    )
     app.add_handler(
         MessageHandler(
             filters.TEXT,

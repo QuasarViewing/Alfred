@@ -5,3 +5,7 @@ python-telegram-bot
 chromadb
 anthropic
 ddgs
+google-auth                                                                                                   
+google-auth-oauthlib                                                                                          
+google-auth-httplib2
+google-api-python-client
