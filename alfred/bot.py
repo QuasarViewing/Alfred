@@ -26,6 +26,8 @@ from gmail_tool import (
     create_draft,
     send_email
 )
+from morning_brief import send_morning_brief
+from apscheduler.schedulers.background import BackgroundScheduler
 import os
 import logging
 import anthropic
@@ -486,6 +488,10 @@ async def handle_message(update, context):
 
 def run_bot():
     init_db()
+
+    scheduler = BackgroundScheduler()
+    scheduler.add_job(send_morning_brief, "cron", hour=7, minute=0, timezone='Pacific/Auckland')
+    scheduler.start()
     app = (
         ApplicationBuilder().token(TOKEN).build()
     )
