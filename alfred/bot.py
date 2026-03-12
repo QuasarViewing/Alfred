@@ -29,10 +29,12 @@ from gmail_tool import (
 )
 from morning_brief import send_morning_brief
 from apscheduler.schedulers.background import BackgroundScheduler
+from tts_handler import speak
 import os
 import logging
 import anthropic
 import tempfile
+
 
 
 load_dotenv()
@@ -484,6 +486,12 @@ async def handle_message(update, context):
     await update.message.reply_text(
         claude_response, parse_mode="HTML"
     )
+    audio_path = speak(claude_response)
+    if audio_path:
+        await update.message.reply_voice(
+            voice=open(audio_path, "rb")
+        )
+        os.remove(audio_path)
     log_conversation(
         user_message, claude_response
     )
@@ -505,6 +513,12 @@ async def handle_voice(update, context):
         )
 
         await update.message.reply_text(claude_response, parse_mode="HTML")
+        audio_path = speak(claude_response)
+        if audio_path:
+            await update.message.reply_voice(
+                voice=open(audio_path, "rb")
+            )
+            os.remove(audio_path)
         log_conversation(transcript, claude_response)
     except Exception as e:
         await update.message.reply_text("Sorry, I couldn't process your voice message.")
