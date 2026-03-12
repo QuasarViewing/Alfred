@@ -17,6 +17,12 @@ from calendar_tool import (
     get_upcoming_events,
     add_event,
 )
+from gmail_tool import (
+    get_unread_emails,
+    search_emails,
+    create_draft,
+    send_email
+)
 import os
 import logging
 import anthropic
@@ -152,6 +158,85 @@ def ask_claude(message, memories):
                 ],
             },
         },
+        {
+            "name": "get_unread_emails",
+            "description": "Retrieve a list of unread emails from the user's Gmail account.",
+            "input_schema": {
+                "type": "object",
+                "properties": {
+                    "max_results": {
+                        "type": "integer",
+                        "description": "The maximum number of unread emails to retrieve.",
+                    }
+                },
+                "required": [],
+            },
+            
+        },
+        {
+            "name": "search_emails",
+            "description": "Search for emails in the user's Gmail account that match a specific query.",
+            "input_schema": {
+                "type": "object",
+                "properties": {
+                    "query": {
+                        "type": "string",
+                        "description": "The search query to find relevant emails (e.g., 'from:alice subject:meeting').",
+                    },
+                    "max_results": {
+                        "type": "integer",
+                        "description": "The maximum number of matching emails to retrieve.",
+                    },
+                },
+                "required": ["query"],
+            },
+
+        },
+        {
+            "name": "create_draft",
+            "description": "Create a draft email in the user's Gmail account.",
+            "input_schema": {
+                "type": "object",
+                "properties": {
+                    "to": {
+                        "type": "string",
+                        "description": "The recipient's email address.",
+                    },
+                    "subject": {
+                        "type": "string",
+                        "description": "The subject of the email.",
+                    },
+                    "body": {
+                        "type": "string",
+                        "description": "The body content of the email.",
+                    },
+                },
+                "required": ["to", "subject", "body"],
+            },
+        },
+        {
+            "name": "send_email",
+            "description": "Send an email from the user's Gmail account.",
+            "input_schema": {
+                "type": "object",
+                "properties": {
+                    "to": {
+                        "type": "string",
+                        "description": "The recipient's email address.",
+                    },
+                    "subject": {
+                        "type": "string",
+                        "description": "The subject of the email.",
+                    },
+                    "body": {
+                        "type": "string",
+                        "description": "The body content of the email.",
+                    },
+                },
+                "required": ["to", "subject", "body"],
+            },
+        },
+        
     ]
 
     response = client.messages.create(
@@ -221,6 +306,31 @@ def ask_claude(message, memories):
                         description=block.input.get(
                             "description", ""
                         ),
+                    )
+                elif block.name == "get_unread_emails":
+                    tool_result = get_unread_emails(
+                        block.input.get(
+                            "max_results", 10
+                        )
+                    )
+                elif block.name == "search_emails":
+                    tool_result = search_emails(
+                        query=block.input["query"],
+                        max_results=block.input.get(
+                            "max_results", 10
+                        ),
+                    )
+                elif block.name == "create_draft":
+                    tool_result = create_draft(
+                        to=block.input["to"],
+                        subject=block.input["subject"],
+                        body=block.input["body"],
+                    )
+                elif block.name == "send_email":
+                    tool_result = send_email(
+                        to=block.input["to"],
+                        subject=block.input["subject"],
+                        body=block.input["body"],
                     )
                 tool_results.append(
                     {
