@@ -116,3 +116,59 @@ def edit_event(event_id, summary=None, start_time=None, end_time=None, descripti
         return f"Event updated: {updated_event.get('htmlLink')}"
     except Exception as e:
         return f"An error occurred while editing the event: {e}"
+
+def get_free_slots(date_str):
+    try:
+        creds = get_google_credentials()
+        service = build(
+            "calendar", "v3", credentials=creds
+        )
+        date_start = f"{date_str}T00:00:00Z"
+        date_end = f"{date_str}T23:59:59Z"
+        events_result = (
+            service.events()
+            .list(
+                calendarId="primary",
+                timeMin=date_start,
+                timeMax=date_end,
+                singleEvents=True,
+                orderBy="startTime",
+            )
+            .execute()
+        )
+        events = events_result.get("items", [])
+        busy_slots = []
+        for event in events:
+            start = event["start"].get(
+                "dateTime",
+                event["start"].get("date"),
+            )
+            end = event["end"].get(
+                "dateTime",
+                event["end"].get("date"),
+            )
+            busy_slots.append((start, end))
+        if not events:
+            return f"You are completely free on {date_str}."
+        
+        day_start = datetime.fromisoformat(f"{date_str}T08:00:00+13:00")
+        day_end = datetime.fromisoformat(f"{date_str}T22:00:00+13:00")
+
+        free_slots = []
+        cursor = day_start
+
+        for start, end in busy_slots:
+            event_start = datetime.fromisoformat(start)
+            event_end = datetime.fromisoformat(end)
+            if cursor < event_start:
+                free_slots.append(f"{cursor.strftime('%H:%M')} - {event_start.strftime('%H:%M')}")
+            cursor = event_end
+        
+        if cursor < day_end:
+            free_slots.append(f"{cursor.strftime('%H:%M')} - {day_end.strftime('%H:%M')}")
+        
+        if not free_slots:
+            return f"No free time found on {date_str}."
+        return f"Free slots on {date_str}:\n" + "\n".join(free_slots)
+    except Exception as e:
+        return f"An error occurred while fetching free slots: {e}"

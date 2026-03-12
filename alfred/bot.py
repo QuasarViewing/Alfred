@@ -17,7 +17,8 @@ from calendar_tool import (
     get_upcoming_events,
     add_event,
     delete_event,
-    edit_event
+    edit_event,
+    get_free_slots
 )
 from gmail_tool import (
     get_unread_emails,
@@ -282,7 +283,20 @@ def ask_claude(message, memories):
                 "required": ["event_id"],
             },
         },
-        
+        {
+            "name": "get_free_slots",
+            "description": "Get free time slots in the user's calendar for a specific date.",
+            "input_schema": {
+                "type": "object",
+                "properties": {
+                    "date": {
+                        "type": "string",
+                        "description": "The date to check for free slots in ISO 8601 format (e.g., '2026-03-13').",
+                    }
+                },
+                "required": ["date"],
+            },
+        }
     ]
 
     response = client.messages.create(
@@ -397,6 +411,10 @@ def ask_claude(message, memories):
                         description=block.input.get(
                             "description"
                         ),
+                    )
+                elif block.name == "get_free_slots":
+                    tool_result = get_free_slots(
+                        date_str=block.input["date"]
                     )
                 tool_results.append(
                     {
