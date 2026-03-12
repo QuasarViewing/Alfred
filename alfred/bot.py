@@ -4,6 +4,7 @@ from telegram.ext import (
     filters,
 )
 from dotenv import load_dotenv
+from voice_handler import transcribe_voice
 from database import init_db, log_conversation
 from memory import store_memory, retrieve_memories
 from datetime import datetime
@@ -31,6 +32,8 @@ from apscheduler.schedulers.background import BackgroundScheduler
 import os
 import logging
 import anthropic
+import tempfile
+
 
 load_dotenv()
 TOKEN = os.getenv("TELEGRAM_TOKEN")
@@ -485,6 +488,27 @@ async def handle_message(update, context):
         user_message, claude_response
     )
 
+async def handle_voice(update, context):
+    try:
+        voice_file = await update.message.voice.get_file()
+
+        with tempfile.NamedTemporaryFile(suffix=".ogg", delete=False) as tmp:
+            tmp_path = tmp.name
+        await voice_file.download_to_drive(tmp_path)
+
+        transcript = transcribe_voice(tmp_path)
+        os.remove(tmp_path)
+
+        memories = retrieve_memories(transcript)
+        claude_response = ask_claude(
+            transcript, memories
+        )
+
+        await update.message.reply_text(claude_response, parse_mode="HTML")
+        log_conversation(transcript, claude_response)
+    except Exception as e:
+        await update.message.reply_text("Sorry, I couldn't process your voice message.")
+        logging.error(f"Error handling voice message: {e}")
 
 def run_bot():
     init_db()
@@ -499,6 +523,12 @@ def run_bot():
         MessageHandler(
             filters.TEXT,
             handle_message,
+        )
+    )
+    app.add_handler(
+        MessageHandler(
+            filters.VOICE,
+            handle_voice,
         )
     )
     app.run_polling()
