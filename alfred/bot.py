@@ -16,6 +16,8 @@ from tools import (
 from calendar_tool import (
     get_upcoming_events,
     add_event,
+    delete_event,
+    edit_event
 )
 from gmail_tool import (
     get_unread_emails,
@@ -236,6 +238,50 @@ def ask_claude(message, memories):
                 "required": ["to", "subject", "body"],
             },
         },
+        {
+            "name": "delete_event",
+            "description": "Delete an event from the user's calendar.",
+            "input_schema": {
+                "type": "object",
+                "properties": {
+                    "event_id": {
+                        "type": "string",
+                        "description": "The ID of the event to delete.",
+                    }
+                },
+                "required": ["event_id"],
+            },
+        },
+        {
+            "name": "edit_event",
+            "description": "Edit an existing event in the user's calendar.",
+            "input_schema": {
+                "type": "object",
+                "properties": {
+                    "event_id": {
+                        "type": "string",
+                        "description": "The ID of the event to edit.",
+                    },
+                    "summary": {
+                        "type": "string",
+                        "description": "The new title of the event.",
+                    },
+                    "start_time": {
+                        "type": "string",
+                        "description": "The new start time of the event in ISO 8601 format.",
+                    },
+                    "end_time": {
+                        "type": "string",
+                        "description": "The new end time of the event in ISO 8601 format.",
+                    },
+                    "description": {
+                        "type": "string",
+                        "description": "A new description of the event.",
+                    },
+                },
+                "required": ["event_id"],
+            },
+        },
         
     ]
 
@@ -331,6 +377,26 @@ def ask_claude(message, memories):
                         to=block.input["to"],
                         subject=block.input["subject"],
                         body=block.input["body"],
+                    )
+                elif block.name == "delete_event":
+                    tool_result = delete_event(
+                        event_id=block.input["event_id"]
+                    )
+                elif block.name == "edit_event":
+                    tool_result = edit_event(
+                        event_id=block.input["event_id"],
+                        summary=block.input.get(
+                            "summary"
+                        ),
+                        start_time=block.input.get(
+                            "start_time"
+                        ),
+                        end_time=block.input.get(
+                            "end_time"
+                        ),
+                        description=block.input.get(
+                            "description"
+                        ),
                     )
                 tool_results.append(
                     {
