@@ -122,6 +122,8 @@ Response
 
 # Learning Objectives
 
+<img width="124" height="168" alt="image" src="https://github.com/user-attachments/assets/850c02f2-e801-44f5-aede-e4c248e6b14a" />
+
 Alfred was used as a practical software engineering learning project.
 
 Topics explored while building the system include:
