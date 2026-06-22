@@ -27,6 +27,7 @@ def init_db():
     init_preferences_table()
     init_task_history_table()
     init_watchlist_table()
+    init_portfolio_table()
 
 
 def log_conversation(user_message, alfred_response):
@@ -116,9 +117,25 @@ def init_watchlist_table():
         """
         create table if not exists watchlist(
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        symbol TEXT UNIQUE,
-        added_at TEXT,
-        notes TEXT)
+        ticker TEXT UNIQUE,
+        alert_threshold_percent REAL DEFAULT 5.0,
+        date_added TEXT)
+   """
+    )
+    conn.commit()
+    conn.close()
+
+def init_portfolio_table():
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute(
+        """
+        create table if not exists portfolio(
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        ticker TEXT UNIQUE,
+        shares REAL,
+        average_price REAL,
+        date_added TEXT)
    """
     )
     conn.commit()

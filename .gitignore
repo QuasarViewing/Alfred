@@ -20,3 +20,11 @@ notes/
 # OS
 .DS_Store
 Thumbs.db
+
+
+alfred/token.json
+alfred/credentials.json
+
+# AI modelsgit diff --stat
+alfred/kokoro-v1_0.onnx
+alfred/voices-v1_0.bin
