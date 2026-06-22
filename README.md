@@ -1,85 +1,169 @@
 # Alfred
 
-Alfred is a personal AI assistant built to manage information across multiple areas of daily life through a single conversational interface.
+> Personal AI assistant and life-management platform built in Python.
 
-Unlike a traditional chatbot, Alfred combines memory, email, calendar management, voice interaction and personal productivity tools into a unified assistant designed for long-term use.
+Alfred combines memory, email, calendar management, voice interaction, financial tools, and automation into a single conversational interface.
+
+Built as both a long-term personal project and a software engineering learning platform.
+
+---
 
 ## Features
 
+### Memory & Context
 - Persistent memory using ChromaDB and SQLite
-- Gmail integration (read, search and summarise emails)
-- Google Calendar integration (read and create events)
-- Voice input using Whisper
-- Voice output using Kokoro TTS
-- Daily morning brief generation
-- Portfolio tracking and watchlists
-- Technical market analysis (RSI, moving averages)
-- Tool-based orchestration framework
-- Telegram chat interface
+- Context retrieval across conversations
+- Structured conversation storage
+- Long-term memory experiments
 
-## Architecture
+### Communication
+- Gmail integration
+- Email retrieval and summarisation
+- Action item extraction
+- Inbox overview generation
+
+### Scheduling
+- Google Calendar integration
+- Natural language calendar queries
+- Event retrieval and schedule awareness
+
+### Voice
+- Whisper speech-to-text
+- Kokoro text-to-speech
+- End-to-end voice interactions
+
+### Daily Briefing
+- Weather overview
+- Calendar summary
+- Email highlights
+- Daily information aggregation
+
+### Financial Tools
+- Portfolio tracking
+- Watchlists
+- Position performance tracking
+- RSI calculations
+- Moving averages
+- Market data retrieval through Yahoo Finance
+
+### Tool Framework
+- Modular tool architecture
+- Dynamic tool execution
+- Extensible integration system
+
+---
+
+# Screenshots
+
+
+<img width="643" height="983" alt="image" src="https://github.com/user-attachments/assets/d4e12a46-b42b-48fd-9b5a-8d07df31405f" />
+
+
+---
+
+# Architecture
 
 ```text
+User
+ │
+ ▼
 Telegram
-    │
-    ▼
-FastAPI Backend
-    │
- ┌──┴─────────────┐
- ▼                ▼
-Claude         Memory Layer
-                (ChromaDB +
-                 SQLite)
-
-    │
-    ▼
-
+ │
+ ▼
+Message Handler
+ │
+ ▼
+Claude
+ │
+ ▼
 Tool Router
-
-├─ Gmail
-├─ Calendar
-├─ Portfolio
-├─ Morning Brief
-├─ Voice Services
-└─ Future Tools
+ ├── Memory
+ ├── Gmail
+ ├── Calendar
+ ├── Finance
+ ├── Morning Brief
+ └── Voice Services
+ │
+ ▼
+Response
 ```
 
-## Screenshots
+# Tech Stack
 
-<img width="580" height="967" alt="image" src="https://github.com/user-attachments/assets/be028587-76df-4a4b-afbc-3fd0c69de88d" />
-
-
-## Technical Stack
-
-### Backend
+## Backend
 
 - Python
 - FastAPI
 - SQLite
 - ChromaDB
 
-### AI & Voice
+## AI & Voice
 
 - Claude API
 - Whisper
 - Kokoro TTS
 
-### Integrations
+## Integrations
 
 - Gmail API
 - Google Calendar API
 - Telegram Bot API
+- Yahoo Finance API
 
-## Why I Built It
+## Development
 
-Alfred started as an experiment in long-term AI memory and personal productivity.
+- Git
+- Virtual Environments
+- Structured Logging
+- Environment Configuration
+- Error Handling
 
-The long-term goal is to explore whether an AI assistant can build a more consistent model of behaviour, habits and preferences over time by combining memory, communication, scheduling and personal data into a single system.
+---
 
-## Future Work
+# Learning Objectives
 
-- Enhanced behavioural profiling
-- Better memory retrieval and ranking
-- Additional productivity integrations
-- Improved voice conversations
-- Deployment and multi-device access
+Alfred was used as a practical software engineering learning project.
+
+Topics explored while building the system include:
+
+- FastAPI
+- OAuth
+- Google APIs
+- Logging
+- Error Handling
+- Database Design
+- Context Managers
+- Function Composition
+- API Integrations
+- Tool Orchestration
+
+Each new concept was documented with notes, examples, and exercises during development.
+
+---
+
+# Why I Built Alfred
+
+Most productivity tools focus on a single domain.
+
+Alfred explores what happens when memory, communication, scheduling, voice interaction, and personal data are combined into a single assistant capable of maintaining long-term context.
+
+The project began as a software engineering learning exercise and evolved into an ongoing exploration of AI-assisted personal organisation.
+
+---
+
+# Current Status
+
+Personal project.
+
+Used as a platform for experimentation, learning, and exploration of long-term AI systems.
+
+---
+
+# Future Areas of Exploration
+
+- Improved memory retrieval
+- Behavioural pattern analysis
+- Additional automation workflows
+- Enhanced voice interaction
+- Expanded financial tooling
+- Personal knowledge management
