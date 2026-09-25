@@ -1,0 +1,18 @@
+services:
+  alfred:
+    build: .
+    container_name: alfred
+    restart: unless-stopped
+    env_file: .env
+    volumes:
+      # alfred.db, chroma_db/, token.json, credentials.json, logs, browser session
+      - ./data:/data
+      # Kokoro model files — too big to bake into the image
+      - ./kokoro-v1_0.onnx:/models/kokoro-v1_0.onnx:ro
+      - ./voices-v1_0.bin:/models/voices-v1_0.bin:ro
+      # Whisper + ChromaDB download their models here on first run — keep them
+      - model-cache:/root/.cache
+    # No ports: Alfred polls Telegram outward, nothing needs to reach in.
+
+volumes:
+  model-cache:
