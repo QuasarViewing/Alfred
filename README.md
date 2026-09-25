@@ -169,3 +169,7 @@ Used as a platform for experimentation, learning, and exploration of long-term A
 - Enhanced voice interaction
 - Expanded financial tooling
 - Personal knowledge management
+
+---
+
+**Setup, safety design and technical details:** see [alfred/README.md](alfred/README.md).
