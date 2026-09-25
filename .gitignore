@@ -1,29 +1,39 @@
 # Environment and secrets
 alfred/.env
+alfred/token.json
+alfred/credentials.json
 
 # Python
+venv/
 alfred/venv/
-alfred/__pycache__/
-alfred/*.pyc
+__pycache__/
+*.pyc
+.pytest_cache/
 
-# Databases
+# Databases and runtime data
 alfred/alfred.db
+alfred/alfred.db-wal
+alfred/alfred.db-shm
 alfred/chroma_db/
+alfred/data/
+alfred/browser_profile/
+alfred/screenshots/
 
 # Logs
+alfred.log
 alfred/alfred.log
 
-# Notes and docs
+# Notes and docs (private) — README is the public one
 *.md
+!alfred/README.md
+
+# AI models (too big for git)
+alfred/kokoro-v1_0.onnx
+alfred/voices-v1_0.bin
+
+# Claude Code personal settings
+.claude/settings.local.json
 
 # OS
 .DS_Store
 Thumbs.db
-
-
-alfred/token.json
-alfred/credentials.json
-
-# AI modelsgit diff --stat
-alfred/kokoro-v1_0.onnx
-alfred/voices-v1_0.bin
