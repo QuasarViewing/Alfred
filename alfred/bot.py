@@ -4,6 +4,7 @@ from telegram.ext import (
     filters,
 )
 from dotenv import load_dotenv
+from finance_tool import add_to_portfolio, get_ticker_info, get_portfolio_summary, add_to_watchlist
 from voice_handler import transcribe_voice
 from database import init_db, log_conversation
 from memory import store_memory, retrieve_memories
@@ -302,8 +303,68 @@ def ask_claude(message, memories):
                     }
                 },
                 "required": ["date"],
+            }, 
+        },
+        {
+            "name": "get_ticker_info",
+            "description": "Get information about a specific stock ticker.",
+            "input_schema": {
+                "type": "object",
+                "properties": {
+                    "ticker": {
+                        "type": "string",
+                        "description": "The stock ticker symbol to retrieve information for (e.g., 'AAPL').",
+                    }
+                },
+                "required": ["ticker"],
+            },
+        },
+        {
+            "name": "add_to_portfolio",
+            "description": "Add a stock to the user's portfolio.",
+            "input_schema": {
+                "type": "object",
+                "properties": {
+                    "ticker": {
+                        "type": "string",
+                        "description": "The stock ticker symbol to add to the portfolio (e.g., 'AAPL').",
+                    },
+                    "shares": {
+                        "type": "number",
+                        "description": "The number of shares to add to the portfolio.",
+                    },
+                    "avg_buy_price": {
+                        "type": "number",
+                        "description": "The average buy price of the shares added to the portfolio.",
+                    }
+                },
+                "required": ["ticker", "shares", "avg_buy_price"],
+            },
+        },
+        {
+            "name": "get_portfolio_summary",
+            "description": "Get a summary of the user's stock portfolio.",
+            "input_schema": {
+                "type": "object",
+                "properties": {},
+                "required": [],
+            },
+        },
+        {
+            "name": "add_to_watchlist",
+            "description": "Add a stock to the user's watchlist.",
+            "input_schema": {
+                "type": "object",
+                "properties": {
+                    "ticker": {
+                        "type": "string",
+                        "description": "The stock ticker symbol to add to the watchlist (e.g., 'AAPL').",
+                    }
+                },
+                "required": ["ticker"],
             },
         }
+
     ]
 
     response = client.messages.create(
@@ -423,6 +484,23 @@ def ask_claude(message, memories):
                     tool_result = get_free_slots(
                         date_str=block.input["date"]
                     )
+                elif block.name == "get_ticker_info":
+                    tool_result = get_ticker_info(
+                        ticker=block.input["ticker"]
+                    )
+                elif block.name == "add_to_portfolio":
+                    tool_result = add_to_portfolio(
+                        ticker=block.input["ticker"],
+                        shares=block.input["shares"],
+                        avg_buy_price=block.input["avg_buy_price"]
+                    )
+                elif block.name == "get_portfolio_summary":
+                    tool_result = get_portfolio_summary()
+                elif block.name == "add_to_watchlist":
+                    tool_result = add_to_watchlist(
+                        ticker=block.input["ticker"]
+                    )
+
                 tool_results.append(
                     {
                         "type": "tool_result",
@@ -495,6 +573,7 @@ async def handle_message(update, context):
     log_conversation(
         user_message, claude_response
     )
+
 
 async def handle_voice(update, context):
     try:

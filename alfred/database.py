@@ -134,7 +134,7 @@ def init_portfolio_table():
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         ticker TEXT UNIQUE,
         shares REAL,
-        average_price REAL,
+        avg_buy_price REAL,
         date_added TEXT)
    """
     )

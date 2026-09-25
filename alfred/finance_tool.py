@@ -1,3 +1,4 @@
+from torch import threshold
 import yfinance as yf
 import pandas as pd
 import pandas_ta as ta
@@ -122,3 +123,39 @@ def add_to_watchlist(ticker, threshold_percent=5.0):
         return f"{ticker.upper()} added to watchlist — will alert if price moves {threshold_percent}% in a day"
     except Exception as e:
         return f"Error adding to watchlist: {e}"
+
+def check_watchlist():
+    try:
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute("SELECT ticker, alert_threshold_percent FROM watchlist")
+        watchlist = cursor.fetchall()
+        conn.close()
+
+        if not watchlist:
+            return None
+        
+        alerts = []
+
+        for ticker, threshold_percent in watchlist:
+            stock = yf.Ticker(ticker)
+            hist = stock.history(period="2d")
+
+            if len(hist) < 2:
+                continue
+
+            previous_close = hist["Close"].iloc[-2]
+            current_price = hist["Close"].iloc[-1]
+            percent_change = ((current_price - previous_close) / previous_close) * 100
+
+            if abs(percent_change) >= threshold:
+                direction = "up" if percent_change > 0 else "down"
+                alerts.append(
+                    f"{ticker}: {direction} {abs(percent_change):.1f}% "
+                    f"(${previous_close:.2f} → ${current_price:.2f})"
+                )
+        
+        return alerts if alerts else None
+    
+    except Exception as e:
+        return f"Error checking watchlist: {e}"
