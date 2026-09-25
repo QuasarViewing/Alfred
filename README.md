@@ -4,8 +4,6 @@ A personal AI agent I talk to through Telegram, by text, voice or photo. Alfred 
 
 Built solo in Python. Speech runs locally; Claude handles reasoning and tool selection.
 
-> Demo videos: _coming soon_ (memory · voice · market brief)
-
 <img width="643" height="983" alt="Alfred in Telegram" src="https://github.com/user-attachments/assets/d4e12a46-b42b-48fd-9b5a-8d07df31405f" />
 
 ---
@@ -191,12 +189,9 @@ They run against a temp database, so no network or API calls.
 Also: send a photo for vision coaching, and say *"think through this with me"* for Socrates mode.
 
 ## Why I Built Alfred
+I struggle with really bad ADHD that makes me being able to do things take alot longer then i've ever wanted, whether it be bills, ordering food, anything that requires purpose or structure to start. So i built it to push myself over the edge
 
-Most productivity tools focus on a single domain.
-
-Alfred explores what happens when memory, communication, scheduling, voice interaction, and personal data are combined into a single assistant capable of maintaining long-term context.
-
-The project began as a software engineering learning exercise and evolved into an ongoing exploration of AI-assisted personal organisation.
+I also really enjoy behavioral psychology and wanted to see if the potential for what Alfred can become is a tool that assists me in the future with whatever it be i need, whether that's something to tell me how im feeling or just track my state linearly. 
 
 ## What Alfred won't do
 Alfred doesn't recommend trades, doesn't claim certainty about prices, and doesn't hide a poor track record. The market brief describes what the indicators show, alongside how often each signal type has actually been right.
