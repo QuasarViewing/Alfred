@@ -26,6 +26,7 @@ alfred/alfred.log
 # Notes and docs (private) — README is the public one
 *.md
 !/README.md
+!/alfred/README.md
 
 # AI models (too big for git)
 alfred/kokoro-v1_0.onnx
