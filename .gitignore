@@ -25,14 +25,15 @@ alfred/alfred.log
 
 # Notes and docs (private) — README is the public one
 *.md
-!alfred/README.md
+!/README.md
 
 # AI models (too big for git)
 alfred/kokoro-v1_0.onnx
 alfred/voices-v1_0.bin
 
-# Claude Code personal settings
+# Editor and personal settings
 .claude/settings.local.json
+.vscode/
 
 # OS
 .DS_Store

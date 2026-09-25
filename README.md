@@ -78,6 +78,8 @@ Python 3.13 · Claude API (tool use) · python-telegram-bot · SQLite · ChromaD
 
 ## Project layout
 
+All the code lives in `alfred/`:
+
 ```
 bot.py              Telegram handlers, Claude tool loop, scheduler, commands
 tool_registry.py    Every tool: schema + function + needs-confirmation flag
@@ -117,10 +119,13 @@ tests/              pytest suite — 84 tests
 1. Telegram: create a bot with **@BotFather** to get the token, and find your chat ID with **@userinfobot**.
 2. Anthropic: create an API key at console.anthropic.com.
 3. Google Cloud: create a project, enable the **Calendar** and **Gmail** APIs, configure the OAuth consent screen, create a **Desktop app** OAuth client and download it as `credentials.json`.
-4. Kokoro: download `kokoro-v1_0.onnx` and `voices-v1_0.bin` into this folder.
+4. Kokoro: download `kokoro-v1_0.onnx` and `voices-v1_0.bin` into the `alfred/` folder.
+
+All the commands below are run from inside the `alfred/` folder.
 
 ### 2. Run locally (Windows)
 ```powershell
+cd alfred
 py -3.13 -m venv venv
 .\venv\Scripts\activate
 pip install -r requirements.txt
@@ -133,6 +138,7 @@ ffmpeg must be on your PATH for Whisper.
 
 ### 3. Run in Docker
 ```bash
+cd alfred
 mkdir data
 # move runtime data into the mounted folder
 mv alfred.db chroma_db token.json credentials.json data/
@@ -154,6 +160,7 @@ Create a free Akahu personal app (my.akahu.nz → connect banks; developers.akah
 
 ## Tests
 ```bash
+cd alfred
 py -m pytest tests -q
 ```
 84 tests cover:
