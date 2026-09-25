@@ -189,9 +189,9 @@ They run against a temp database, so no network or API calls.
 Also: send a photo for vision coaching, and say *"think through this with me"* for Socrates mode.
 
 ## Why I Built Alfred
-I struggle with really bad ADHD that makes me being able to do things take alot longer then i've ever wanted, whether it be bills, ordering food, anything that requires purpose or structure to start. So i built it to push myself over the edge
+I built Alfred because starting things bills, admin, ordering food, anything that needs structure to begin has always cost me more effort than it should. Alfred takes the friction out of that: it handles the admin I'd otherwise put off, and quietly keeps track of things so I don't have to hold them all in my head.
 
-I also really enjoy behavioral psychology and wanted to see if the potential for what Alfred can become is a tool that assists me in the future with whatever it be i need, whether that's something to tell me how im feeling or just track my state linearly. 
+I'm also drawn to behavioural psychology, and I'm curious what Alfred becomes over time a tool that reflects my own patterns back to me and helps me understand how I actually function.
 
 ## What Alfred won't do
 Alfred doesn't recommend trades, doesn't claim certainty about prices, and doesn't hide a poor track record. The market brief describes what the indicators show, alongside how often each signal type has actually been right.
